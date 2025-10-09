@@ -743,7 +743,7 @@ select.form-control {
 .app-header {
   text-align: center;
   padding: var(--space-32) var(--space-16);
-  background: linear-gradient(135deg, var(--color-bg-2), var(--color-bg-6));
+  background: var(--color-bg-2);
   border-radius: var(--radius-lg);
   margin-bottom: var(--space-24);
 }
@@ -889,26 +889,34 @@ select.form-control {
   text-align: center;
 }
 
-/* Composition Grid */
+/* Composition Grid - CRITICAL: Horizontal Layout Implementation */
 .composition-section {
   margin-bottom: var(--space-24);
 }
 
-.composition-grid {
+.grid-container {
+  overflow-x: auto;
   border: 2px solid var(--color-border);
   border-radius: var(--radius-base);
-  overflow: auto;
   background: var(--color-surface);
+}
+
+.composition-grid {
+  display: flex;
+  flex-direction: column;
+  min-width: max-content;
 }
 
 .grid-header {
   display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
   background: var(--color-bg-7);
   border-bottom: 2px solid var(--color-border);
 }
 
 .beat-header {
-  flex: 1;
+  min-width: 320px; /* 8 laghus × 40px each */
   padding: var(--space-8);
   text-align: center;
   font-weight: var(--font-weight-bold);
@@ -937,32 +945,57 @@ select.form-control {
 
 .grid-body {
   display: flex;
+  flex-direction: column;
 }
 
-.beat-column {
-  flex: 1;
+.beat-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.matra-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  min-width: 320px; /* 8 laghus × 40px each */
   border-right: 1px solid var(--color-border);
 }
 
-.beat-column:last-child {
+.matra-container:last-child {
   border-right: none;
 }
 
-.beat-column.vibhag-start {
+.matra-container.vibhag-start {
   border-left: 3px solid var(--color-primary);
 }
 
+.laghu-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
 .laghu-cell {
+  width: 40px;
   height: 50px;
+  border-right: 1px solid var(--color-card-border);
   border-bottom: 1px solid var(--color-card-border);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   transition: background-color var(--duration-fast) var(--ease-standard);
   position: relative;
+  flex-shrink: 0;
+}
+
+.laghu-cell:last-child {
+  border-right: none;
 }
 
 .laghu-cell:hover {
@@ -988,10 +1021,18 @@ select.form-control {
 .laghu-number {
   position: absolute;
   top: 2px;
-  left: 4px;
+  left: 2px;
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
   opacity: 0.7;
+  line-height: 1;
+}
+
+.laghu-bol {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  text-align: center;
+  margin-top: var(--space-12);
 }
 
 /* Controls Section */
@@ -1196,13 +1237,14 @@ select.form-control {
     grid-template-columns: 1fr;
   }
   
-  .composition-grid {
-    font-size: var(--font-size-sm);
+  .laghu-cell {
+    width: 35px;
+    height: 45px;
+    font-size: var(--font-size-xs);
   }
   
-  .laghu-cell {
-    height: 40px;
-    font-size: var(--font-size-md);
+  .beat-header, .matra-container {
+    min-width: 280px; /* 8 laghus × 35px each */
   }
   
   .bol-btn {
@@ -1240,5 +1282,14 @@ select.form-control {
   
   .theka-display {
     justify-content: center;
+  }
+  
+  .laghu-cell {
+    width: 30px;
+    height: 40px;
+  }
+  
+  .beat-header, .matra-container {
+    min-width: 240px; /* 8 laghus × 30px each */
   }
 }

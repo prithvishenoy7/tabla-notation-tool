@@ -126,6 +126,7 @@ let composition = [];
 let isPlaying = false;
 let playbackInterval = null;
 let currentBeat = 0;
+let currentLaghu = 0;
 let isLooping = false;
 
 // DOM Elements
@@ -140,6 +141,7 @@ const currentBolSpan = document.getElementById('currentBol');
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Initializing Tabla Notation Tool');
     populateTalaDropdown();
     initializeKeyboard();
     setupEventListeners();
@@ -148,6 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Populate tala dropdown
 function populateTalaDropdown() {
+    console.log('Populating tala dropdown');
     // Clear existing options except the first one
     while (talaSelect.children.length > 1) {
         talaSelect.removeChild(talaSelect.lastChild);
@@ -165,10 +168,16 @@ function populateTalaDropdown() {
 
 // Initialize virtual keyboard
 function initializeKeyboard() {
+    console.log('Initializing keyboard');
     const categories = ['daya', 'baya', 'compound', 'special'];
     
     categories.forEach(category => {
         const container = document.getElementById(category + 'Bols');
+        if (!container) {
+            console.error(`Container not found for category: ${category}`);
+            return;
+        }
+        
         bolsData[category].forEach(bol => {
             const button = document.createElement('button');
             button.className = 'bol-btn';
@@ -188,6 +197,7 @@ function initializeKeyboard() {
 
 // Setup event listeners
 function setupEventListeners() {
+    console.log('Setting up event listeners');
     // Tala selection
     talaSelect.addEventListener('change', handleTalaChange);
     
@@ -218,6 +228,8 @@ function setupEventListeners() {
 // Handle tala selection change
 function handleTalaChange() {
     const selectedValue = talaSelect.value;
+    console.log('Tala changed to:', selectedValue);
+    
     if (!selectedValue) {
         talaInfo.classList.add('hidden');
         compositionGrid.classList.add('hidden');
@@ -227,6 +239,8 @@ function handleTalaChange() {
     }
     
     currentTala = talasData[selectedValue];
+    console.log('Current tala:', currentTala);
+    
     displayTalaInfo();
     generateCompositionGrid();
     displayTheka();
@@ -237,6 +251,7 @@ function handleTalaChange() {
 function displayTalaInfo() {
     if (!currentTala) return;
     
+    console.log('Displaying tala info');
     talaName.textContent = `${currentTala.name} / ${currentTala.devanagari}`;
     talaBeats.textContent = `${currentTala.beats} beats / ${currentTala.beats} मात्रा`;
     talaPattern.textContent = `Pattern / ताली-खाली: ${currentTala.pattern.join(' - ')}`;
@@ -244,13 +259,19 @@ function displayTalaInfo() {
     talaInfo.classList.remove('hidden');
 }
 
-// Generate composition grid
+// Generate composition grid with horizontal laghu layout
 function generateCompositionGrid() {
-    if (!currentTala) return;
+    if (!currentTala) {
+        console.log('No current tala selected');
+        return;
+    }
     
+    console.log('Generating composition grid for:', currentTala.name);
+    
+    // Clear existing content
     compositionGrid.innerHTML = '';
     
-    // Create header
+    // Create header with beat information
     const header = document.createElement('div');
     header.className = 'grid-header';
     
@@ -281,39 +302,58 @@ function generateCompositionGrid() {
     }
     
     compositionGrid.appendChild(header);
+    console.log('Header created with', currentTala.beats, 'beats');
     
-    // Create body with laghu cells
+    // Create body with horizontal laghu layout
     const body = document.createElement('div');
     body.className = 'grid-body';
+    
+    // Create a single row containing all beats
+    const beatRow = document.createElement('div');
+    beatRow.className = 'beat-row';
     
     currentVibhag = 0;
     beatsInCurrentVibhag = 0;
     
     for (let beat = 1; beat <= currentTala.beats; beat++) {
-        const beatColumn = document.createElement('div');
-        beatColumn.className = 'beat-column';
+        const matraContainer = document.createElement('div');
+        matraContainer.className = 'matra-container';
         
         // Check if this is the start of a new vibhag
         if (beatsInCurrentVibhag === 0) {
-            beatColumn.classList.add('vibhag-start');
+            matraContainer.classList.add('vibhag-start');
         }
         
-        // Create 8 laghu cells for each beat
+        // Create horizontal row of 8 laghus for this matra
+        const laghuRow = document.createElement('div');
+        laghuRow.className = 'laghu-row';
+        
         for (let laghu = 0; laghu < 8; laghu++) {
             const cell = document.createElement('div');
             cell.className = 'laghu-cell';
             cell.dataset.beat = beat;
             cell.dataset.laghu = laghu;
-            cell.innerHTML = `<div class="laghu-number">${laghu + 1}</div>`;
+            
+            const laghuNumber = document.createElement('div');
+            laghuNumber.className = 'laghu-number';
+            laghuNumber.textContent = laghu + 1;
+            
+            const bolContent = document.createElement('div');
+            bolContent.className = 'laghu-bol';
+            
+            cell.appendChild(laghuNumber);
+            cell.appendChild(bolContent);
             
             cell.addEventListener('click', function() {
+                console.log(`Clicked cell beat:${beat}, laghu:${laghu}`);
                 placeBol(beat, laghu);
             });
             
-            beatColumn.appendChild(cell);
+            laghuRow.appendChild(cell);
         }
         
-        body.appendChild(beatColumn);
+        matraContainer.appendChild(laghuRow);
+        beatRow.appendChild(matraContainer);
         
         beatsInCurrentVibhag++;
         if (beatsInCurrentVibhag >= currentTala.vibhags[currentVibhag]) {
@@ -322,17 +362,23 @@ function generateCompositionGrid() {
         }
     }
     
+    body.appendChild(beatRow);
     compositionGrid.appendChild(body);
+    
+    // Show the grid
     compositionGrid.classList.remove('hidden');
+    console.log('Composition grid generated and displayed');
     
     // Initialize composition array
     composition = Array.from({length: currentTala.beats}, () => Array(8).fill(null));
+    console.log('Composition array initialized:', composition);
 }
 
 // Display theka
 function displayTheka() {
     if (!currentTala) return;
     
+    console.log('Displaying theka');
     thekaDisplay.innerHTML = '';
     
     currentTala.theka.forEach((thekaItem, index) => {
@@ -351,10 +397,13 @@ function displayTheka() {
     });
     
     thekaDisplay.classList.remove('hidden');
+    console.log('Theka displayed with', currentTala.theka.length, 'beats');
 }
 
 // Select bol from keyboard
 function selectBol(button) {
+    console.log('Selecting bol:', button.dataset.bol);
+    
     // Remove selection from all buttons
     document.querySelectorAll('.bol-btn').forEach(btn => {
         btn.classList.remove('selected');
@@ -368,36 +417,50 @@ function selectBol(button) {
     };
     
     currentBolSpan.textContent = `${selectedBol.devanagari} (${selectedBol.romanized})`;
+    console.log('Selected bol:', selectedBol);
 }
 
 // Place bol in grid
 function placeBol(beat, laghu) {
-    if (!selectedBol || !currentTala) return;
+    if (!selectedBol || !currentTala) {
+        console.log('Cannot place bol - missing selected bol or current tala');
+        return;
+    }
+    
+    console.log(`Placing bol ${selectedBol.devanagari} at beat:${beat}, laghu:${laghu}`);
     
     const cell = document.querySelector(`[data-beat="${beat}"][data-laghu="${laghu}"]`);
-    if (!cell) return;
+    if (!cell) {
+        console.error(`Cell not found for beat:${beat}, laghu:${laghu}`);
+        return;
+    }
     
     // Update composition data
     composition[beat - 1][laghu] = selectedBol;
     
     // Update cell display
     cell.classList.add('filled');
-    cell.innerHTML = `<div class="laghu-number">${laghu + 1}</div>${selectedBol.devanagari}`;
+    const bolContent = cell.querySelector('.laghu-bol');
+    if (bolContent) {
+        bolContent.textContent = selectedBol.devanagari;
+    }
+    
+    console.log('Bol placed successfully');
 }
 
 // Playback functions
 function playComposition() {
     if (!currentTala || isPlaying) return;
     
+    console.log('Starting playback');
     isPlaying = true;
     currentBeat = 0;
+    currentLaghu = 0;
     document.getElementById('playbackStatus').classList.remove('hidden');
     
     const tempo = document.getElementById('tempoSelect').value;
     const tempoSpeed = { slow: 1000, medium: 600, fast: 400 };
     const interval = tempoSpeed[tempo] / 8; // Divide by 8 for laghu timing
-    
-    let currentLaghu = 0;
     
     playbackInterval = setInterval(() => {
         // Clear previous highlighting
@@ -434,6 +497,7 @@ function playComposition() {
 }
 
 function stopPlayback() {
+    console.log('Stopping playback');
     isPlaying = false;
     if (playbackInterval) {
         clearInterval(playbackInterval);
@@ -458,18 +522,22 @@ function toggleLoop() {
         loopBtn.classList.remove('btn--primary');
         loopBtn.classList.add('btn--outline');
     }
+    console.log('Loop toggled:', isLooping);
 }
 
 // Composition management
 function clearComposition() {
     if (!currentTala) return;
     
+    console.log('Clearing composition');
     composition = Array.from({length: currentTala.beats}, () => Array(8).fill(null));
     
     document.querySelectorAll('.laghu-cell').forEach(cell => {
         cell.classList.remove('filled');
-        const laghuNum = cell.dataset.laghu;
-        cell.innerHTML = `<div class="laghu-number">${parseInt(laghuNum) + 1}</div>`;
+        const bolContent = cell.querySelector('.laghu-bol');
+        if (bolContent) {
+            bolContent.textContent = '';
+        }
     });
 }
 
@@ -548,7 +616,10 @@ function loadComposition(index) {
                 const cell = document.querySelector(`[data-beat="${beatIndex + 1}"][data-laghu="${laghuIndex}"]`);
                 if (cell) {
                     cell.classList.add('filled');
-                    cell.innerHTML = `<div class="laghu-number">${laghuIndex + 1}</div>${bol.devanagari}`;
+                    const bolContent = cell.querySelector('.laghu-bol');
+                    if (bolContent) {
+                        bolContent.textContent = bol.devanagari;
+                    }
                 }
             }
         });
