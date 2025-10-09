@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabla Notation Tool - तबला स्वरलिपि उपकरण</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="app-header">
+            <h1>Tabla Notation Tool</h1>
+            <h2 class="devanagari-title">तबला स्वरलिपि उपकरण</h2>
+        </header>
+
+        <!-- Tala Selection Section -->
+        <section class="tala-section card">
+            <div class="card__body">
+                <h3>Select Tala / ताल चुनें</h3>
+                <div class="tala-controls">
+                    <div class="form-group">
+                        <label for="talaSelect" class="form-label">Tala:</label>
+                        <select id="talaSelect" class="form-control">
+                            <option value="">-- Select a Tala --</option>
+                            <option value="teentaal">Teentaal / तीनताल</option>
+                            <option value="jhaptaal">Jhaptaal / झपताल</option>
+                            <option value="ektaal">Ektaal / एकताल</option>
+                            <option value="rupak">Rupak / रूपक</option>
+                            <option value="dadra">Dadra / दादरा</option>
+                            <option value="keherwa">Keherwa / कहरवा</option>
+                        </select>
+                    </div>
+                    <div id="talaInfo" class="tala-info hidden">
+                        <div class="tala-details">
+                            <span id="talaName"></span>
+                            <span id="talaBeats"></span>
+                            <span id="talaPattern"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Virtual Keyboard Section -->
+        <section class="keyboard-section card">
+            <div class="card__body">
+                <h3>Bol Keyboard / बोल कीबोर्ड</h3>
+                <div class="keyboard-categories">
+                    <div class="keyboard-category">
+                        <h4>Daya (Right Hand) / दाया हाथ</h4>
+                        <div id="dayaBols" class="bol-buttons daya-bols"></div>
+                    </div>
+                    <div class="keyboard-category">
+                        <h4>Baya (Left Hand) / बाया हाथ</h4>
+                        <div id="bayaBols" class="bol-buttons baya-bols"></div>
+                    </div>
+                    <div class="keyboard-category">
+                        <h4>Compound / संयुक्त</h4>
+                        <div id="compoundBols" class="bol-buttons compound-bols"></div>
+                    </div>
+                    <div class="keyboard-category">
+                        <h4>Special / विशेष</h4>
+                        <div id="specialBols" class="bol-buttons special-bols"></div>
+                    </div>
+                </div>
+                <div class="selected-bol">
+                    <span>Selected: </span>
+                    <span id="currentBol">None</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Composition Grid Section -->
+        <section class="composition-section card">
+            <div class="card__body">
+                <h3>Composition Grid / स्वरलिपि ग्रिड</h3>
+                <div id="compositionGrid" class="composition-grid hidden">
+                    <!-- Grid will be generated dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Controls Section -->
+        <section class="controls-section card">
+            <div class="card__body">
+                <h3>Controls / नियंत्रण</h3>
+                <div class="control-groups">
+                    <div class="control-group">
+                        <h4>Playback / प्लेबैक</h4>
+                        <div class="playback-controls">
+                            <button id="playBtn" class="btn btn--primary">Play / चलाएं</button>
+                            <button id="stopBtn" class="btn btn--secondary">Stop / रोकें</button>
+                            <button id="loopBtn" class="btn btn--outline">Loop / दोहराएं</button>
+                        </div>
+                        <div class="tempo-controls">
+                            <label for="tempoSelect" class="form-label">Tempo:</label>
+                            <select id="tempoSelect" class="form-control">
+                                <option value="slow">Slow / धीमा</option>
+                                <option value="medium" selected>Medium / मध्यम</option>
+                                <option value="fast">Fast / तेज़</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+                        <h4>Composition / रचना</h4>
+                        <div class="composition-controls">
+                            <button id="clearBtn" class="btn btn--outline">Clear / साफ़ करें</button>
+                            <button id="saveBtn" class="btn btn--primary">Save / सेव करें</button>
+                            <button id="loadBtn" class="btn btn--secondary">Load / लोड करें</button>
+                            <button id="exportBtn" class="btn btn--outline">Export / निर्यात करें</button>
+                        </div>
+                        <div class="composition-name">
+                            <input type="text" id="compositionName" class="form-control" placeholder="Composition name / रचना का नाम">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Theka Reference Section -->
+        <section class="theka-section card">
+            <div class="card__body">
+                <h3>Theka Reference / ठेका संदर्भ</h3>
+                <div id="thekaDisplay" class="theka-display hidden">
+                    <!-- Theka will be displayed here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Saved Compositions Modal -->
+        <div id="compositionsModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Saved Compositions / सहेजी गई रचनाएं</h3>
+                    <button id="closeModal" class="btn btn--outline">×</button>
+                </div>
+                <div class="modal-body">
+                    <div id="compositionsList">
+                        <!-- Saved compositions will be listed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Export Modal -->
+        <div id="exportModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Export Composition / रचना निर्यात करें</h3>
+                    <button id="closeExportModal" class="btn btn--outline">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="export-formats">
+                        <h4>Devanagari / देवनागरी:</h4>
+                        <textarea id="devanagariExport" class="form-control" readonly rows="8"></textarea>
+                        
+                        <h4>Romanized / रोमनाइज्ड:</h4>
+                        <textarea id="romanizedExport" class="form-control" readonly rows="8"></textarea>
+                    </div>
+                    <div class="export-controls">
+                        <button id="copyDevanagari" class="btn btn--primary">Copy Devanagari</button>
+                        <button id="copyRomanized" class="btn btn--secondary">Copy Romanized</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Playback Status -->
+        <div id="playbackStatus" class="playback-status hidden">
+            <div class="status-indicator"></div>
+            <span>Playing...</span>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
