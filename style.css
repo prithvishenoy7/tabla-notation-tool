@@ -794,6 +794,35 @@ select.form-control {
   border: 1px solid var(--color-border);
 }
 
+/* Configuration Section */
+.config-section {
+  margin-bottom: var(--space-24);
+}
+
+.config-controls {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.config-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-16);
+}
+
+.config-info {
+  padding: var(--space-16);
+  background: var(--color-bg-1);
+  border-radius: var(--radius-base);
+  border: 1px solid var(--color-border);
+}
+
+.config-display {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
 /* Virtual Keyboard */
 .keyboard-section {
   margin-bottom: var(--space-24);
@@ -889,46 +918,82 @@ select.form-control {
   text-align: center;
 }
 
-/* Composition Grid - CRITICAL: Horizontal Layout Implementation */
+/* Composition Grid - CRITICAL: Responsive Wrapping Layout */
 .composition-section {
   margin-bottom: var(--space-24);
 }
 
 .grid-container {
-  overflow-x: auto;
   border: 2px solid var(--color-border);
   border-radius: var(--radius-base);
   background: var(--color-surface);
+  padding: var(--space-16);
 }
 
 .composition-grid {
   display: flex;
   flex-direction: column;
-  min-width: max-content;
+  gap: var(--space-24);
 }
 
-.grid-header {
+/* Cycle containers */
+.cycle-container {
   display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  background: var(--color-bg-7);
-  border-bottom: 2px solid var(--color-border);
+  flex-direction: column;
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius-base);
+  background: var(--color-background);
+  padding: var(--space-12);
 }
 
-.beat-header {
-  min-width: 320px; /* 8 laghus × 40px each */
-  padding: var(--space-8);
+.cycle-header {
+  background: var(--color-primary);
+  color: var(--color-btn-primary-text);
+  padding: var(--space-8) var(--space-16);
+  margin: calc(-1 * var(--space-12)) calc(-1 * var(--space-12)) var(--space-12) calc(-1 * var(--space-12));
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  font-weight: var(--font-weight-bold);
+  text-align: center;
+}
+
+/* Responsive grid layout using flexbox with wrapping */
+.cycle-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+
+/* Matra containers that wrap responsively */
+.matra-container {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  min-width: calc(var(--laghu-width) * var(--laghus-per-matra));
+  flex: 0 0 auto;
+}
+
+/* Dynamic CSS variables set by JavaScript */
+:root {
+  --laghu-width: 40px;
+  --laghus-per-matra: 8;
+  --matras-per-line: 4;
+}
+
+/* Matra header showing beat information */
+.matra-header {
+  padding: var(--space-4) var(--space-8);
+  background: var(--color-bg-7);
+  border-bottom: 1px solid var(--color-border);
   text-align: center;
   font-weight: var(--font-weight-bold);
-  border-right: 1px solid var(--color-border);
-  position: relative;
+  font-size: var(--font-size-sm);
 }
 
-.beat-header:last-child {
-  border-right: none;
-}
-
-.beat-header.vibhag-start {
+.matra-header.vibhag-start {
+  background: var(--color-bg-3);
   border-left: 3px solid var(--color-primary);
 }
 
@@ -941,47 +1006,19 @@ select.form-control {
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
   color: var(--color-primary);
+  margin-left: var(--space-4);
 }
 
-.grid-body {
-  display: flex;
-  flex-direction: column;
-}
-
-.beat-row {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-}
-
-.matra-container {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  min-width: 320px; /* 8 laghus × 40px each */
-  border-right: 1px solid var(--color-border);
-}
-
-.matra-container:last-child {
-  border-right: none;
-}
-
-.matra-container.vibhag-start {
-  border-left: 3px solid var(--color-primary);
-}
-
+/* Laghu row within each matra */
 .laghu-row {
   display: flex;
   flex-direction: row;
-  flex-wrap: nowrap;
-  width: 100%;
 }
 
 .laghu-cell {
-  width: 40px;
+  width: var(--laghu-width);
   height: 50px;
   border-right: 1px solid var(--color-card-border);
-  border-bottom: 1px solid var(--color-card-border);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1033,6 +1070,14 @@ select.form-control {
   font-weight: var(--font-weight-semibold);
   text-align: center;
   margin-top: var(--space-12);
+}
+
+/* Line breaks for responsive wrapping */
+.line-break {
+  flex-basis: 100%;
+  height: 0;
+  margin: var(--space-8) 0;
+  border-top: 1px dashed var(--color-border);
 }
 
 /* Controls Section */
@@ -1229,6 +1274,10 @@ select.form-control {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+  :root {
+    --laghu-width: 35px;
+  }
+  
   .keyboard-categories {
     grid-template-columns: 1fr;
   }
@@ -1237,14 +1286,13 @@ select.form-control {
     grid-template-columns: 1fr;
   }
   
-  .laghu-cell {
-    width: 35px;
-    height: 45px;
-    font-size: var(--font-size-xs);
+  .config-group {
+    grid-template-columns: 1fr;
   }
   
-  .beat-header, .matra-container {
-    min-width: 280px; /* 8 laghus × 35px each */
+  .laghu-cell {
+    height: 45px;
+    font-size: var(--font-size-xs);
   }
   
   .bol-btn {
@@ -1259,6 +1307,10 @@ select.form-control {
 }
 
 @media (max-width: 480px) {
+  :root {
+    --laghu-width: 30px;
+  }
+  
   .app-header {
     padding: var(--space-16);
   }
@@ -1285,11 +1337,46 @@ select.form-control {
   }
   
   .laghu-cell {
-    width: 30px;
     height: 40px;
   }
   
-  .beat-header, .matra-container {
-    min-width: 240px; /* 8 laghus × 30px each */
+  .cycle-container {
+    padding: var(--space-8);
   }
+  
+  .grid-container {
+    padding: var(--space-8);
+  }
+}
+
+/* Large screens - optimize for more content */
+@media (min-width: 1200px) {
+  :root {
+    --laghu-width: 45px;
+  }
+}
+
+/* Extra responsive adjustments for different laghu counts */
+.laghus-2 {
+  --laghu-width: 80px;
+}
+
+.laghus-4 {
+  --laghu-width: 60px;
+}
+
+.laghus-6 {
+  --laghu-width: 50px;
+}
+
+.laghus-8 {
+  --laghu-width: 40px;
+}
+
+.laghus-12 {
+  --laghu-width: 35px;
+}
+
+.laghus-16 {
+  --laghu-width: 30px;
 }

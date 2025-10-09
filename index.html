@@ -41,6 +41,44 @@
             </div>
         </section>
 
+        <!-- Configuration Section -->
+        <section class="config-section card">
+            <div class="card__body">
+                <h3>Configuration / कॉन्फ़िगरेशन</h3>
+                <div class="config-controls">
+                    <div class="config-group">
+                        <div class="form-group">
+                            <label for="laghusSelect" class="form-label">Laghus per Matra / मात्रा में लघु:</label>
+                            <select id="laghusSelect" class="form-control">
+                                <option value="2">2 Laghus</option>
+                                <option value="4">4 Laghus</option>
+                                <option value="6">6 Laghus</option>
+                                <option value="8" selected>8 Laghus</option>
+                                <option value="12">12 Laghus</option>
+                                <option value="16">16 Laghus</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="cyclesSelect" class="form-label">Number of Cycles / चक्रों की संख्या:</label>
+                            <select id="cyclesSelect" class="form-control">
+                                <option value="1">1 Cycle</option>
+                                <option value="2" selected>2 Cycles</option>
+                                <option value="3">3 Cycles</option>
+                                <option value="4">4 Cycles</option>
+                                <option value="6">6 Cycles</option>
+                                <option value="8">8 Cycles</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="config-info">
+                        <div class="config-display">
+                            <span id="currentConfig">Configuration: 8 laghus per matra, 2 cycles</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Virtual Keyboard Section -->
         <section class="keyboard-section card">
             <div class="card__body">
@@ -76,7 +114,7 @@
                 <h3>Composition Grid / स्वरलिपि ग्रिड</h3>
                 <div class="grid-container">
                     <div id="compositionGrid" class="composition-grid hidden">
-                    <!-- Grid will be generated dynamically -->
+                        <!-- Grid will be generated dynamically -->
                     </div>
                 </div>
             </div>
